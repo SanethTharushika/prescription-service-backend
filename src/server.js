@@ -1,22 +1,41 @@
+import dns from "node:dns";
 import dotenv from "dotenv";
-
-dotenv.config();
 
 import app from "./app.js";
 import connectDB from "./config/db.js";
-
 import {
     connectRabbitMQ
 } from "./config/rabbitmq.js";
 
-await connectDB();
-await connectRabbitMQ();
+dotenv.config();
 
-const PORT =
-    process.env.PORT || 5001;
+dns.setServers([
+    "1.1.1.1",
+    "8.8.8.8"
+]);
 
-app.listen(PORT, () => {
-    console.log(
-        `Prescription Service running on ${PORT}`
-    );
-});
+async function startServer() {
+    try {
+        await connectDB();
+        await connectRabbitMQ();
+
+        const PORT =
+            process.env.PORT || 5001;
+
+        app.listen(PORT, () => {
+            console.log(
+                `Prescription Service running on ${PORT}`
+            );
+        });
+    } catch (error) {
+        console.error(
+            "❌ Failed to start Prescription Service:"
+        );
+
+        console.error(error.message);
+
+        process.exit(1);
+    }
+}
+
+startServer();

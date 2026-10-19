@@ -28,12 +28,9 @@ async function startServer() {
             );
         });
     } catch (error) {
-        console.error(
-            "❌ Failed to start Prescription Service:"
-        );
-
-        console.error(error.message);
-
+        console.error("❌ Failed to start Medicine Service:", error);
+        console.error("Code:", error.code);
+        if (error.errors) console.error("Details:", error.errors);
         process.exit(1);
     }
 }
